@@ -31,6 +31,7 @@ class MessageTicker(Message):
         def __init__(self):
             super().__init__(MSG_TICKER_PROC)
             self.markets = []
+            self.ticker = None
 
 class MessageOHLCV(Message):
         def __init__(self):
@@ -60,7 +61,7 @@ class EventQueue(object):
         self.thread = Thread(target=self.process);        
         self.thread.start()
           
-    def onTick(self):        
+    def onTick(self):
         self.timer  = Timer(self.period, self.onTick)
         self.timer.start()
         tick_msg = Message(MSG_INTERNAL_TICK)
