@@ -31,15 +31,40 @@ class StrategyTest(StrategyBase):
         '''
         super().__init__(period, dispatcher)
            
-    def on_message(self, mgs: Message):
+    def on_message(self, msg: Message):
         print("StrategyTest::on_message")
-        if mgs.type == MSG_TICKER_PROC:
+        if msg.type == MSG_TICKER_PROC:
             print("StrategyTest::MSG_TICKER_PROC")
-        elif mgs.type == MSG_OHLCV_PROC:
+        elif msg.type == MSG_OHLCV_PROC:
             print("StrategyTest::MSG_OHLCV_PROC")
     def on_init(self, msg: Message):
         print("StrategyTest::on_init")
             
     def on_tick(self, msg: Message):
         print("StrategyTest::on_tick")
-        
+
+
+class StrategyTest2(StrategyBase):
+    '''
+    classdocs
+    '''
+
+    def __init__(self, period, dispatcher):
+        '''
+        Constructor
+        '''
+        super().__init__(period, dispatcher)
+
+    def on_message(self, msg: Message):
+        print("StrategyTest2::on_message")
+        if msg.type == MSG_TICKER_PROC:
+            print("StrategyTest2::MSG_TICKER_PROC")
+            print(msg.markets, msg.ticker)
+        elif msg.type == MSG_OHLCV_PROC:
+            print("StrategyTest2::MSG_OHLCV_PROC")
+
+    def on_init(self, msg: Message):
+        print("StrategyTest2::on_init")
+
+    def on_tick(self, msg: Message):
+        print("StrategyTest2::on_tick")
