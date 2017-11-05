@@ -1,3 +1,8 @@
 .project
 .pydevproject
 */__pycache__/*
+*.pyc
+errors.log
+info.log
+logging.json
+

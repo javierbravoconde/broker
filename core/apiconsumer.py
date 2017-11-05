@@ -6,6 +6,7 @@ Created on Oct 30, 2017
 from core.async import EventQueue, Message, MessageTicker, MessageOHLCV
 from core.dispatcher import Dispatcher
 import requests
+import logging
 
 class BaseConsumer(EventQueue):
     '''
@@ -20,13 +21,13 @@ class BaseConsumer(EventQueue):
         self.url = url
                     
     def on_message(self, mgs: Message):
-        print("BaseConsumer::on_message")
+        logging.getLogger().debug("BaseConsumer::on_message")
 
     def on_init(self, msg: Message):
-        print("BaseConsumer::on_init")
+        logging.getLogger().debug("BaseConsumer::on_init")
             
     def on_tick(self, msg: Message):
-        print("BaseConsumer::on_tick")
+        logging.getLogger().debug("BaseConsumer::on_tick")
         
     def perform_request(self, url):
         return requests.get(url)
@@ -38,7 +39,7 @@ class TickerConsumer(BaseConsumer):
         super().__init__(period, dispatcher, url)
     
     def on_tick(self, msg: Message):        
-        print("TickerConsumer::on_tick")
+        logging.getLogger().debug("TickerConsumer::on_tick")
         #result = self.perform_request("tickerurl")
         #TODO save on db the result and notify the dispatcher
         msg_ticker = MessageTicker()
@@ -50,7 +51,7 @@ class OHLCVConsumer(BaseConsumer):
         super().__init__(period, dispatcher, url)
     
     def on_tick(self, msg: Message):
-        print("OHLCVConsumer::on_tick")    
+        logging.getLogger().debug("OHLCVConsumer::on_tick")    
         #self.perform_request("OHLCVurl")                 
         #TODO save on db the result and notify the dispatcher
         msg_ohlcv = MessageOHLCV()

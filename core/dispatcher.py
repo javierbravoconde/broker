@@ -10,6 +10,7 @@ import time
 import datetime
 from core.async import EventQueue, Message
 from core.async import MSG_TICKER_PROC, MSG_OHLCV_PROC
+import logging
 
 
 class Dispatcher(EventQueue):
@@ -26,36 +27,36 @@ class Dispatcher(EventQueue):
         self.ohlcv_observers = {}
     
         
-    def on_message(self, mgs: Message):
-        print("dispatcher::on_message")
-        if mgs.type == MSG_TICKER_PROC:
-            for market_modif in mgs.markets:
+    def on_message(self, msg: Message):
+        logging.getLogger().debug("Dispatcher::on_message")
+        if msg.type == MSG_TICKER_PROC:
+            for market_modif in msg.markets:
                 if self.ticker_observers.get(market_modif):
                     for observer in self.ticker_observers[market_modif]:
-                        observer.put(mgs)
-        elif mgs.type == MSG_OHLCV_PROC:
-            for market_modif in mgs.markets:
+                        observer.put(msg)
+        elif msg.type == MSG_OHLCV_PROC:
+            for market_modif in msg.markets:
                 if self.ohlcv_observers.get(market_modif):
                     for observer in self.ohlcv_observers[market_modif]:
-                        observer.put(mgs)
+                        observer.put(msg)
              
         
 
     def on_init(self, msg: Message):
-        print("dispatcher::on_init")
+        pass
             
     def on_tick(self, msg: Message):
-        print("dispatcher::on_tick")        
+        pass
     
     def subscribe_to_ticker_changes(self, market, strategy):
-        print("subscribing to maket")
+        logging.getLogger().debug("Dispatcher::subscribe_to_ticker_changes")
         if self.ticker_observers.get(market):
             self.ticker_observers[market].append(strategy)
         else:
             self.ticker_observers[market] = [strategy]
 
     def subscribe_to_ohlcv_changes(self, market, strategy):
-        print("subscribing to maket")
+        logging.getLogger().debug("Dispatcher::subscribe_to_ohlcv_changes")
         if self.ohlcv_observers.get(market):
             self.ohlcv_observers[market].append(strategy)
         else:

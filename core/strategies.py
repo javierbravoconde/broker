@@ -7,6 +7,7 @@ from core.async import EventQueue, Message
 from core.dispatcher import Dispatcher
 import requests
 from core.async import MSG_TICKER_PROC, MSG_OHLCV_PROC
+import logging
 
 
 class StrategyBase(EventQueue):
@@ -32,16 +33,17 @@ class StrategyTest(StrategyBase):
         super().__init__(period, dispatcher)
            
     def on_message(self, msg: Message):
-        print("StrategyTest::on_message")
         if msg.type == MSG_TICKER_PROC:
-            print("StrategyTest::MSG_TICKER_PROC")
+            logging.getLogger().info("StrategyTest::MSG_TICKER_PROC")
         elif msg.type == MSG_OHLCV_PROC:
-            print("StrategyTest::MSG_OHLCV_PROC")
+            logging.getLogger().info("StrategyTest::MSG_OHLCV_PROC")
+        else:
+            logging.getLogger().error("StrategyTest::Message Unknow")
     def on_init(self, msg: Message):
-        print("StrategyTest::on_init")
+        logging.getLogger().debug("StrategyTest::on_init")
             
     def on_tick(self, msg: Message):
-        print("StrategyTest::on_tick")
+        logging.getLogger().debug("StrategyTest::on_tick")
 
 
 class StrategyTest2(StrategyBase):
@@ -56,15 +58,17 @@ class StrategyTest2(StrategyBase):
         super().__init__(period, dispatcher)
 
     def on_message(self, msg: Message):
-        print("StrategyTest2::on_message")
         if msg.type == MSG_TICKER_PROC:
-            print("StrategyTest2::MSG_TICKER_PROC")
-            print(msg.markets, msg.ticker)
+            logging.getLogger().info("StrategyTest2::MSG_TICKER_PROC %s", str(msg.markets))
+            logging.getLogger().debug(msg.markets, msg.ticker)
         elif msg.type == MSG_OHLCV_PROC:
-            print("StrategyTest2::MSG_OHLCV_PROC")
+            logging.getLogger().info("StrategyTest2::MSG_OHLCV_PROC")
+        else:
+            logging.getLogger().error("StrategyTest::Message Unknow")
+            
 
     def on_init(self, msg: Message):
-        print("StrategyTest2::on_init")
+        logging.getLogger().debug("StrategyTest2::on_init")
 
     def on_tick(self, msg: Message):
-        print("StrategyTest2::on_tick")
+        logging.getLogger().debug("StrategyTest2::on_tick")
