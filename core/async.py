@@ -6,6 +6,7 @@ Created on Oct 30, 2017
 
 from queue import Queue
 from threading import Thread, Timer
+import logging
 
 
 MSG_INIT            = 1
@@ -62,27 +63,26 @@ class EventQueue(object):
         self.thread.start()
           
     def onTick(self):
+        logging.getLogger().debug("EventQueue::onTick")
         self.timer  = Timer(self.period, self.onTick)
         self.timer.start()
         tick_msg = Message(MSG_INTERNAL_TICK)
         self.put(tick_msg)
+        
             
     
     def put(self, message):
+        logging.getLogger().debug("EventQueue::put")
         self.queue.put(message)
         
     def process(self):
         while self.running:
             msg = self.queue.get();
-            print("EventQueue msg.type: " + str(msg.type) )
             if msg.type == MSG_INIT:
-                print ("base::initializing")
                 self.on_init(msg)
             elif msg.type == MSG_STOP:
-                print ("base::stopping")
                 self.running = False
             elif msg.type == MSG_INTERNAL_TICK:
-                print ("base::internal tick")
                 self.on_tick(msg)
             else:
                 self.on_message(msg)         
