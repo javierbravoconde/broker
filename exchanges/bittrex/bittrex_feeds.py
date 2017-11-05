@@ -19,6 +19,8 @@ class BittrexTicker(BaseConsumer):
             if output['success'] == True:
                 msg_ticker = MessageTicker()
                 msg_ticker.ticker = output['result']
-                logging.getLogger().debug('BittrexTicker %s %s', market, msg_ticker.ticker)
+                logging.getLogger().info('BittrexTicker %s %s', market, msg_ticker.ticker)
                 msg_ticker.markets.append(market)
                 self.dispatcher.put(msg_ticker)
+            else:
+                logging.getLogger().error("error calling Bittrex::get_ticker")

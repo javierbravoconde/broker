@@ -87,7 +87,7 @@ class EventQueue(object):
             else:
                 self.on_message(msg)         
                 
-    def on_message(self, mgs: Message):
+    def on_message(self, msg: Message):
         pass
 
     def on_init(self, msg: Message):

@@ -44,8 +44,6 @@ if __name__ == '__main__':
     setup_logging()
     
     logging.getLogger().info("Init app...");
-    logging.getLogger().debug("Init app...");
-    
 
     dispatcher = Dispatcher(5)
 
@@ -57,8 +55,8 @@ if __name__ == '__main__':
     test_stg.subscribe_to_ticker_changes(dispatcher, "BTC-1ST")
     test_stg.subscribe_to_ohlcv_changes(dispatcher, "BTC-2GIVE")
 
-    test_stg = StrategyTest2(10, dispatcher)
-    test_stg.subscribe_to_ticker_changes(dispatcher, "BTC-ETH")
-    test_stg.subscribe_to_ohlcv_changes(dispatcher, "BTC-LTC")
+    test_stg2 = StrategyTest2(10, dispatcher)
+    test_stg2.subscribe_to_ticker_changes(dispatcher, "BTC-ETH")
+    test_stg2.subscribe_to_ticker_changes(dispatcher, "BTC-LTC")
         
     pass

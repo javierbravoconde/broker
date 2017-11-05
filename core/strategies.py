@@ -33,11 +33,12 @@ class StrategyTest(StrategyBase):
         super().__init__(period, dispatcher)
            
     def on_message(self, msg: Message):
-        logging.getLogger().debug("StrategyTest::on_message")
         if msg.type == MSG_TICKER_PROC:
-            logging.getLogger().debug("StrategyTest::MSG_TICKER_PROC")
+            logging.getLogger().info("StrategyTest::MSG_TICKER_PROC")
         elif msg.type == MSG_OHLCV_PROC:
-            logging.getLogger().debug("StrategyTest::MSG_OHLCV_PROC")
+            logging.getLogger().info("StrategyTest::MSG_OHLCV_PROC")
+        else:
+            logging.getLogger().error("StrategyTest::Message Unknow")
     def on_init(self, msg: Message):
         logging.getLogger().debug("StrategyTest::on_init")
             
@@ -57,12 +58,14 @@ class StrategyTest2(StrategyBase):
         super().__init__(period, dispatcher)
 
     def on_message(self, msg: Message):
-        logging.getLogger().debug("StrategyTest2::on_message")
         if msg.type == MSG_TICKER_PROC:
-            logging.getLogger().debug("StrategyTest2::MSG_TICKER_PROC")
+            logging.getLogger().info("StrategyTest2::MSG_TICKER_PROC %s", str(msg.markets))
             logging.getLogger().debug(msg.markets, msg.ticker)
         elif msg.type == MSG_OHLCV_PROC:
-            logging.getLogger().debug("StrategyTest2::MSG_OHLCV_PROC")
+            logging.getLogger().info("StrategyTest2::MSG_OHLCV_PROC")
+        else:
+            logging.getLogger().error("StrategyTest::Message Unknow")
+            
 
     def on_init(self, msg: Message):
         logging.getLogger().debug("StrategyTest2::on_init")

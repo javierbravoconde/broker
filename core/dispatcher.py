@@ -27,18 +27,18 @@ class Dispatcher(EventQueue):
         self.ohlcv_observers = {}
     
         
-    def on_message(self, mgs: Message):
+    def on_message(self, msg: Message):
         logging.getLogger().debug("Dispatcher::on_message")
-        if mgs.type == MSG_TICKER_PROC:
-            for market_modif in mgs.markets:
+        if msg.type == MSG_TICKER_PROC:
+            for market_modif in msg.markets:
                 if self.ticker_observers.get(market_modif):
                     for observer in self.ticker_observers[market_modif]:
-                        observer.put(mgs)
-        elif mgs.type == MSG_OHLCV_PROC:
-            for market_modif in mgs.markets:
+                        observer.put(msg)
+        elif msg.type == MSG_OHLCV_PROC:
+            for market_modif in msg.markets:
                 if self.ohlcv_observers.get(market_modif):
                     for observer in self.ohlcv_observers[market_modif]:
-                        observer.put(mgs)
+                        observer.put(msg)
              
         
 
