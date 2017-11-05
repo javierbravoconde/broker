@@ -47,7 +47,7 @@ if __name__ == '__main__':
     logging.getLogger().debug("Init app...");
     
 
-    dispatcher = Dispatcher(1)
+    dispatcher = Dispatcher(5)
 
     tiker_consumer = TickerConsumer(5, dispatcher, "")
     ohlcv_consumer = OHLCVConsumer(5, dispatcher, "")

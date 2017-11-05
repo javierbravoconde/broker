@@ -63,7 +63,7 @@ class EventQueue(object):
         self.thread.start()
           
     def onTick(self):
-        logging.getLogger().debug("EventQueue::onTick")
+        logging.getLogger().debug("EventQueue::onTick %s", self.__class__.__name__)
         self.timer  = Timer(self.period, self.onTick)
         self.timer.start()
         tick_msg = Message(MSG_INTERNAL_TICK)
@@ -72,7 +72,7 @@ class EventQueue(object):
             
     
     def put(self, message):
-        logging.getLogger().debug("EventQueue::put")
+        logging.getLogger().debug("EventQueue::put %s" , self.__class__.__name__)
         self.queue.put(message)
         
     def process(self):
