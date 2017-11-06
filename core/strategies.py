@@ -7,6 +7,9 @@ from core.async import EventQueue, Message
 from core.async import MSG_TICKER_PROC, MSG_OHLCV_PROC
 from order import Order
 import random
+import logging
+from core import db
+
 
 
 class StrategyBase(EventQueue):
@@ -32,16 +35,17 @@ class StrategyTest(StrategyBase):
         super().__init__(period, dispatcher)
            
     def on_message(self, msg: Message):
-        print("StrategyTest::on_message")
         if msg.type == MSG_TICKER_PROC:
-            print("StrategyTest::MSG_TICKER_PROC")
+            logging.getLogger().info("StrategyTest::MSG_TICKER_PROC")
         elif msg.type == MSG_OHLCV_PROC:
-            print("StrategyTest::MSG_OHLCV_PROC")
+            logging.getLogger().info("StrategyTest::MSG_OHLCV_PROC")
+        else:
+            logging.getLogger().error("StrategyTest::Message Unknow")
     def on_init(self, msg: Message):
-        print("StrategyTest::on_init")
+        logging.getLogger().debug("StrategyTest::on_init")
             
     def on_tick(self, msg: Message):
-        print("StrategyTest::on_tick")
+        logging.getLogger().debug("StrategyTest::on_tick")
 
 
 class DummyStrategy(StrategyBase):
@@ -61,27 +65,32 @@ class DummyStrategy(StrategyBase):
 
 
     def on_message(self, msg: Message):
-        print("DummyStrategy::on_message")
+        logging.getLogger().info("DummyStrategy::on_message")
         if msg.type == MSG_TICKER_PROC:
-            print("DummyStrategy::MSG_TICKER_PROC")
+            logging.getLogger().info("DummyStrategy::MSG_TICKER_PROC")
             self.process_ticker(msg)
 
         elif msg.type == MSG_OHLCV_PROC:
-            print("DummyStrategy::MSG_OHLCV_PROC")
+            logging.getLogger().info("DummyStrategy::MSG_OHLCV_PROC")
             #print(msg.symbol, msg.history)
 
     def on_init(self, msg: Message):
-        print("DummyStrategy::on_init")
+        logging.getLogger().info("DummyStrategy::on_init")
 
 
     def on_tick(self, msg: Message):
-        print("StrategyTest2::on_tick")
+        logging.getLogger().info("StrategyTest2::on_tick")
 
     def process_ticker(self, msg: Message):
-        print("DummyStrategy::process_ticker", msg.ticker)
+        logging.getLogger().info("DummyStrategy::process_ticker", msg.ticker)
         last_price = float(msg.ticker['Last'])
         last_price = last_price*random.choice([0.99,1.01])
-        print("DummyStrategy::process_ticker", "last_price", last_price)
+        logging.getLogger().info("DummyStrategy::process_ticker last_price %s", last_price)
+        
+        #we can now retrieve the former tickers belonging to the market        
+        #doc = db.getdocument(self.dbclient, market)
+        #for ticker in doc["Tickers"]:
+        #    logging.getLogger().info(str(ticker))              
 
         if self.previous_price.get(msg.symbol):
             prev_price = self.previous_price.get(msg.symbol)

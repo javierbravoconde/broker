@@ -6,6 +6,8 @@ Created on Oct 30, 2017
 
 from queue import Queue
 from threading import Thread, Timer
+from pymongo import MongoClient
+import logging
 
 
 MSG_INIT            = 1
@@ -47,7 +49,9 @@ class EventQueue(object):
         '''
         Constructor
         '''
-        self.queue = Queue()        
+        self.queue = Queue()
+        self.dbclient = MongoClient()
+                
         init_msg = Message(MSG_INIT)
         self.queue.put(init_msg)
         self.running = True
@@ -62,32 +66,31 @@ class EventQueue(object):
         self.thread.start()
           
     def onTick(self):
+        logging.getLogger().debug("EventQueue::onTick %s", self.__class__.__name__)
         self.timer  = Timer(self.period, self.onTick)
         self.timer.start()
         tick_msg = Message(MSG_INTERNAL_TICK)
         self.put(tick_msg)
+        
             
     
     def put(self, message):
+        logging.getLogger().debug("EventQueue::put %s" , self.__class__.__name__)
         self.queue.put(message)
         
     def process(self):
         while self.running:
             msg = self.queue.get();
-            print("EventQueue msg.type: " + str(msg.type) )
             if msg.type == MSG_INIT:
-                print ("base::initializing")
                 self.on_init(msg)
             elif msg.type == MSG_STOP:
-                print ("base::stopping")
                 self.running = False
             elif msg.type == MSG_INTERNAL_TICK:
-                print ("base::internal tick")
                 self.on_tick(msg)
             else:
                 self.on_message(msg)         
                 
-    def on_message(self, mgs: Message):
+    def on_message(self, msg: Message):
         pass
 
     def on_init(self, msg: Message):

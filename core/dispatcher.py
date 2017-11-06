@@ -10,6 +10,7 @@ import time
 import datetime
 from core.async import EventQueue, Message
 from core.async import MSG_TICKER_PROC, MSG_OHLCV_PROC, MSG_ORDER_PROC
+import logging
 
 
 class Dispatcher(EventQueue):
@@ -28,7 +29,7 @@ class Dispatcher(EventQueue):
     
         
     def on_message(self, msg: Message):
-        print("dispatcher::on_message")
+        logging.getLogger().debug("Dispatcher::on_message")
         if msg.type == MSG_TICKER_PROC:
             if self.ticker_observers.get(msg.symbol):
                 for observer in self.ticker_observers[msg.symbol]:
@@ -47,27 +48,27 @@ class Dispatcher(EventQueue):
         
 
     def on_init(self, msg: Message):
-        print("dispatcher::on_init")
+        pass
             
     def on_tick(self, msg: Message):
-        print("dispatcher::on_tick")        
+        pass
     
     def subscribe_to_ticker(self, symbol, strategy):
-        print("subscribing to symbol ticker", symbol)
+        logging.getLogger().debug("subscribing to symbol ticker", symbol)
         if self.ticker_observers.get(symbol):
             self.ticker_observers[symbol].append(strategy)
         else:
             self.ticker_observers[symbol] = [strategy]
 
     def subscribe_to_ohlcv(self, symbol, strategy):
-        print("subscribing to symbol history")
+        logging.getLogger().debug("subscribing to symbol history")
         if self.ohlcv_observers.get(symbol):
             self.ohlcv_observers[symbol].append(strategy)
         else:
             self.ohlcv_observers[symbol] = [strategy]
 
     def subscribe_to_order(self, symbol, observer):
-        print("subscribing to symbol order")
+        logging.getLogger().debug("subscribing to symbol order")
         if self.order_observers.get(symbol):
             self.order_observers[symbol].append(observer)
         else:

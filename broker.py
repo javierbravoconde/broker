@@ -2,6 +2,7 @@ import abc
 from core.apiconsumer import BaseConsumer
 from core.async import Message
 from core.async import MSG_ORDER_PROC
+import logging
 
 
 class Broker(BaseConsumer):
@@ -40,11 +41,11 @@ class TestBroker(Broker):
     """
     def on_message(self, msg: Message):
         if msg.type == MSG_ORDER_PROC:
-            print("TestBroker::MSG_ORDER_PROC")
-            print(msg)
+            logging.getLogger().info("TestBroker::MSG_ORDER_PROC")
+            logging.getLogger().info(msg)
 
     def on_tick(self, msg: Message):
-        print("TestBroker::on_tick")
+        logging.getLogger().debug("TestBroker::on_tick")
 
     def _submitOrder(self, order):
         raise NotImplementedError()

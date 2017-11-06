@@ -5,6 +5,8 @@ from core.async import MessageTicker
 from core.async import MessageOHLCV
 import pandas as pd
 from datetime import datetime
+import logging
+from core import db
 
 """ 
 I would like to be able to update regularly the list of markets and take the new list into account for ticker and OHLVC
@@ -19,7 +21,7 @@ class BittrexTicker(BaseConsumer):
         self.markets = markets
 
     def on_tick(self, msg: Message):
-        print("BittrexTicker::on_tick")
+        logging.getLogger().debug("BittrexTicker::on_tick")
 
         for market in self.markets:
             output = self.bittrex_api.get_ticker(market)
@@ -27,7 +29,11 @@ class BittrexTicker(BaseConsumer):
                 msg_ticker = MessageTicker()
                 msg_ticker.ticker = output['result']
                 msg_ticker.symbol = market
+                logging.getLogger().info('BittrexTicker %s %s', market, msg_ticker.ticker)
+                db.saveticker(self.dbclient, market, output['result'])
                 self.dispatcher.put(msg_ticker)
+            else:
+                logging.getLogger().error('Error calling bittrex_api.get_ticker for market: %s', market)
 
 
 class BittrexOHLCV(BaseConsumer):
@@ -39,7 +45,7 @@ class BittrexOHLCV(BaseConsumer):
         self.tick_intervals = tick_intervals
 
     def on_tick(self, msg: Message):
-        print("BittrexOHLCV::on_tick")
+        logging.getLogger().debug("BittrexOHLCV::on_tick")
 
         for market in self.markets:
             output = self.bittrex_api.get_tick_history(market, self.tick_intervals)
@@ -88,11 +94,11 @@ class BittrexFeed(BaseConsumer):
         It allows to take into account new markets added to the exchange
         """
 
-        print("BittrexFeed::on_tick")
+        logging.getLogger().debug("BittrexFeed::on_tick")
         self._update_markets()
 
     def on_init(self, msg: Message):
-        print("BittrexFeed::on_init")
+        logging.getLogger().debug("BittrexFeed::on_init")
 
     def _update_markets(self):
         """ Update the list of markets available for the base currency
@@ -106,4 +112,4 @@ class BittrexFeed(BaseConsumer):
             for market in results:
                 if market['BaseCurrency'] == self.base_currency:
                     self.markets.append(market)
-        print(self.markets)
+        logging.getLogger().debug(self.markets)
