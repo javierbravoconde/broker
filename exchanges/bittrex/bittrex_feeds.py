@@ -3,6 +3,7 @@ from core.apiconsumer import BaseConsumer
 from core.async import Message
 from core.async import MessageTicker
 import logging
+from core import db
 
 
 class BittrexTicker(BaseConsumer):
@@ -20,6 +21,7 @@ class BittrexTicker(BaseConsumer):
                 msg_ticker = MessageTicker()
                 msg_ticker.ticker = output['result']
                 logging.getLogger().info('BittrexTicker %s %s', market, msg_ticker.ticker)
+                db.saveticker(self.dbclient, market, output['result'])
                 msg_ticker.markets.append(market)
                 self.dispatcher.put(msg_ticker)
             else:

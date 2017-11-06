@@ -8,6 +8,7 @@ from core.dispatcher import Dispatcher
 import requests
 from core.async import MSG_TICKER_PROC, MSG_OHLCV_PROC
 import logging
+from core import db
 
 
 class StrategyBase(EventQueue):
@@ -61,6 +62,12 @@ class StrategyTest2(StrategyBase):
         if msg.type == MSG_TICKER_PROC:
             logging.getLogger().info("StrategyTest2::MSG_TICKER_PROC %s", str(msg.markets))
             logging.getLogger().debug(msg.markets, msg.ticker)
+            for market in msg.markets:
+                #get the mongodb document corresponding to this market
+                doc = db.getdocument(self.dbclient, market)
+                for ticker in doc["Tickers"]:
+                    logging.getLogger().info(str(ticker))                
+            
         elif msg.type == MSG_OHLCV_PROC:
             logging.getLogger().info("StrategyTest2::MSG_OHLCV_PROC")
         else:
