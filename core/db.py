@@ -6,18 +6,24 @@ Created on Nov 5, 2017
 
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+import datetime
 
 def saveticker(conn : MongoClient, market, tickerinfo):
-    #get existing document
-    
+        
     db = conn.markets_db
     markets = db.market_collection
+        
+    tickerinfo["Date"] = datetime.datetime.utcnow()     
     
-    if  markets.find_one( { "market": market }):
-        markets.update_one({ "market": market }, {"$push": {"tickers": tickerinfo}})
+    if  markets.find_one( { "Market": market }):
+        markets.update_one({ "Market": market }, {"$push": {"Tickers": tickerinfo}})
     else:
-        market = { "market" : market, "tickers" : [tickerinfo] }
+        market = { "Market" : market, "Tickers" : [tickerinfo] }
         markets.insert_one(market).inserted_id
 
 
-    
+def getdocument(conn : MongoClient, market):
+    db = conn.markets_db
+    markets = db.market_collection
+    return markets.find_one({"Market": market})
+
