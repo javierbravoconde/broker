@@ -11,10 +11,9 @@ from threading import Thread, Timer
 MSG_INIT            = 1
 MSG_STOP            = 2
 MSG_INTERNAL_TICK   = 3
-
 MSG_TICKER_PROC     = 4
 MSG_OHLCV_PROC      = 5
-
+MSG_ORDER_PROC      = 6
 
 class Message(object):
     '''
@@ -30,13 +29,14 @@ class Message(object):
 class MessageTicker(Message):
         def __init__(self):
             super().__init__(MSG_TICKER_PROC)
-            self.markets = []
+            self.symbol = None
             self.ticker = None
 
 class MessageOHLCV(Message):
         def __init__(self):
             super().__init__(MSG_OHLCV_PROC)
-            self.markets = []
+            self.symbol = None
+            self.history = None
 
 
 class EventQueue(object):

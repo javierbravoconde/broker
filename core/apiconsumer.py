@@ -11,13 +11,12 @@ class BaseConsumer(EventQueue):
     '''
     classdocs
     '''
-    def __init__(self, period, dispatcher ,url):
+    def __init__(self, period, dispatcher):
         '''
         Constructor
         '''
         super().__init__(period)
         self.dispatcher = dispatcher
-        self.url = url
                     
     def on_message(self, mgs: Message):
         print("BaseConsumer::on_message")
@@ -28,34 +27,28 @@ class BaseConsumer(EventQueue):
     def on_tick(self, msg: Message):
         print("BaseConsumer::on_tick")
         
-    def perform_request(self, url):
-        return requests.get(url)
-        
 
     
 class TickerConsumer(BaseConsumer):
-    def __init__(self, period, dispatcher ,url):
-        super().__init__(period, dispatcher, url)
+    def __init__(self, period, dispatcher):
+        super().__init__(period, dispatcher)
     
     def on_tick(self, msg: Message):        
         print("TickerConsumer::on_tick")
         #result = self.perform_request("tickerurl")
         #TODO save on db the result and notify the dispatcher
         msg_ticker = MessageTicker()
-        msg_ticker.markets.append("BTC-1ST")
+        msg_ticker.market = "BTC-1ST"
         self.dispatcher.put(msg_ticker)
         
 class OHLCVConsumer(BaseConsumer):
-    def __init__(self, period, dispatcher ,url):
-        super().__init__(period, dispatcher, url)
+    def __init__(self, period, dispatcher):
+        super().__init__(period, dispatcher)
     
     def on_tick(self, msg: Message):
         print("OHLCVConsumer::on_tick")    
-        #self.perform_request("OHLCVurl")                 
+        #self.perform_request("OHLCVurl")
         #TODO save on db the result and notify the dispatcher
         msg_ohlcv = MessageOHLCV()
-        msg_ohlcv.markets.append("BTC-2GIVE")
+        msg_ohlcv.market = "BTC-2GIVE"
         self.dispatcher.put(msg_ohlcv)
-
-        
-        

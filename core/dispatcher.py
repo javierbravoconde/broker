@@ -9,7 +9,7 @@ from threading import Thread
 import time
 import datetime
 from core.async import EventQueue, Message
-from core.async import MSG_TICKER_PROC, MSG_OHLCV_PROC
+from core.async import MSG_TICKER_PROC, MSG_OHLCV_PROC, MSG_ORDER_PROC
 
 
 class Dispatcher(EventQueue):
@@ -24,20 +24,25 @@ class Dispatcher(EventQueue):
         super().__init__(period)
         self.ticker_observers = {}
         self.ohlcv_observers = {}
+        self.order_observers = {}
     
         
-    def on_message(self, mgs: Message):
+    def on_message(self, msg: Message):
         print("dispatcher::on_message")
-        if mgs.type == MSG_TICKER_PROC:
-            for market_modif in mgs.markets:
-                if self.ticker_observers.get(market_modif):
-                    for observer in self.ticker_observers[market_modif]:
-                        observer.put(mgs)
-        elif mgs.type == MSG_OHLCV_PROC:
-            for market_modif in mgs.markets:
-                if self.ohlcv_observers.get(market_modif):
-                    for observer in self.ohlcv_observers[market_modif]:
-                        observer.put(mgs)
+        if msg.type == MSG_TICKER_PROC:
+            if self.ticker_observers.get(msg.symbol):
+                for observer in self.ticker_observers[msg.symbol]:
+                    observer.put(msg)
+
+        elif msg.type == MSG_OHLCV_PROC:
+            if self.ohlcv_observers.get(msg.symbol):
+                for observer in self.ohlcv_observers[msg.symbol]:
+                    observer.put(msg)
+
+        elif msg.type == MSG_ORDER_PROC:
+            if self.order_observers.get(msg.symbol):
+                for observer in self.order_observers[msg.symbol]:
+                    observer.put(msg)
              
         
 
@@ -47,17 +52,24 @@ class Dispatcher(EventQueue):
     def on_tick(self, msg: Message):
         print("dispatcher::on_tick")        
     
-    def subscribe_to_ticker_changes(self, market, strategy):
-        print("subscribing to maket")
-        if self.ticker_observers.get(market):
-            self.ticker_observers[market].append(strategy)
+    def subscribe_to_ticker(self, symbol, strategy):
+        print("subscribing to symbol ticker", symbol)
+        if self.ticker_observers.get(symbol):
+            self.ticker_observers[symbol].append(strategy)
         else:
-            self.ticker_observers[market] = [strategy]
+            self.ticker_observers[symbol] = [strategy]
 
-    def subscribe_to_ohlcv_changes(self, market, strategy):
-        print("subscribing to maket")
-        if self.ohlcv_observers.get(market):
-            self.ohlcv_observers[market].append(strategy)
+    def subscribe_to_ohlcv(self, symbol, strategy):
+        print("subscribing to symbol history")
+        if self.ohlcv_observers.get(symbol):
+            self.ohlcv_observers[symbol].append(strategy)
         else:
-            self.ohlcv_observers[market] = [strategy]            
+            self.ohlcv_observers[symbol] = [strategy]
+
+    def subscribe_to_order(self, symbol, observer):
+        print("subscribing to symbol order")
+        if self.order_observers.get(symbol):
+            self.order_observers[symbol].append(observer)
+        else:
+            self.order_observers[symbol] = [observer]
         

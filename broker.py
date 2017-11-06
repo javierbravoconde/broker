@@ -1,35 +1,53 @@
-'''
-Created on Oct 30, 2017
-
-@author: javier
-'''
-
-from core import async
-import time
+import abc
+from core.apiconsumer import BaseConsumer
 from core.async import Message
-from core.async import MSG_STOP
-from core.dispatcher import Dispatcher
-from core.strategies import StrategyTest
-from core.strategies import StrategyTest2
-from core.apiconsumer import TickerConsumer, OHLCVConsumer
-from exchanges.bittrex.bittrex_feeds import BittrexTicker
+from core.async import MSG_ORDER_PROC
 
 
-if __name__ == '__main__':
+class Broker(BaseConsumer):
+    """ Abstract class for a Broker
+
+            A broker is the component in charge of passing order to the exchange
+    """
+
+    def __init__(self, period, dispatcher):
+        super().__init__(period, dispatcher)
+
+    def subscribe_to_order(self, dispatcher, symbol):
+        dispatcher.subscribe_to_order(symbol, self)
 
 
-    dispatcher = Dispatcher(1)
+    def on_message(self, msg: Message):
+        raise NotImplementedError()
 
-    tiker_consumer = TickerConsumer(5, dispatcher, "")
-    ohlcv_consumer = OHLCVConsumer(5, dispatcher, "")
-    bittrex_ticker_consumer = BittrexTicker(5, dispatcher, "")
 
-    test_stg = StrategyTest(10, dispatcher)
-    test_stg.subscribe_to_ticker_changes(dispatcher, "BTC-1ST")
-    test_stg.subscribe_to_ohlcv_changes(dispatcher, "BTC-2GIVE")
+    def on_tick(self, msg: Message):
+        raise NotImplementedError()
 
-    test_stg = StrategyTest2(10, dispatcher)
-    test_stg.subscribe_to_ticker_changes(dispatcher, "BTC-ETH")
-    test_stg.subscribe_to_ohlcv_changes(dispatcher, "BTC-LTC")
-        
-    pass
+
+    def _submitOrder(self, order):
+        raise NotImplementedError()
+
+
+    def _cancelOrder(self, order):
+        raise NotImplementedError()
+
+
+class TestBroker(Broker):
+    """ Test implementation of a Broker
+
+        Print the order as they arrive
+    """
+    def on_message(self, msg: Message):
+        if msg.type == MSG_ORDER_PROC:
+            print("TestBroker::MSG_ORDER_PROC")
+            print(msg)
+
+    def on_tick(self, msg: Message):
+        print("TestBroker::on_tick")
+
+    def _submitOrder(self, order):
+        raise NotImplementedError()
+
+    def _cancelOrder(self, order):
+        raise NotImplementedError()
