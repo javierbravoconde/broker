@@ -6,6 +6,7 @@ Created on Oct 30, 2017
 
 from queue import Queue
 from threading import Thread, Timer
+from pymongo import MongoClient
 import logging
 
 
@@ -48,7 +49,9 @@ class EventQueue(object):
         '''
         Constructor
         '''
-        self.queue = Queue()        
+        self.queue = Queue()
+        self.dbclient = MongoClient()
+                
         init_msg = Message(MSG_INIT)
         self.queue.put(init_msg)
         self.running = True
