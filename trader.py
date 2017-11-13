@@ -42,24 +42,21 @@ def setup_logging(
 
 if __name__ == '__main__':
 
-    #setup_logging()    
-    #logging.getLogger().info("Init app...");
+    setup_logging()    
+    logging.getLogger().info("Init app...");
 
 
-    #dispatcher = Dispatcher(1)
-    #bittrex_feed = BittrexFeed(60, dispatcher)
+    dispatcher = Dispatcher(1)
+    bittrex_feed = BittrexFeed(60, dispatcher)
 
-    #strategy = DummyStrategy(10, dispatcher)
-    #strategy.subscribe_to_ticker(dispatcher, "BTC-LTC")
-    #strategy.subscribe_to_ohlcv(dispatcher, "BTC-LTC")
+    strategy = DummyStrategy(10, dispatcher)
+    strategy.subscribe_to_ticker(dispatcher, "BTC-LTC")
+    strategy.subscribe_to_ohlcv(dispatcher, "BTC-LTC")
 
     
-    #testBroker = TestBroker(10, dispatcher)
-    #testBroker.subscribe_to_order(dispatcher, "BTC-LTC")
-    
-    dbclient = MongoClient()
-    db.saveticker(dbclient, "BTC-BTO" , {'Bid': 0.00774508, 'Ask': 0.00777005, 'Last': 0.00777005})
-    
+    testBroker = TestBroker(10, dispatcher)
+    testBroker.subscribe_to_order(dispatcher, "BTC-LTC")
+        
 
 
     pass
