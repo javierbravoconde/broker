@@ -18,6 +18,8 @@ import logging
 from logging import config
 import os
 import json
+from pymongo import MongoClient
+from core import db
 
 def setup_logging(
     default_path='logging.json',
@@ -51,8 +53,10 @@ if __name__ == '__main__':
     strategy.subscribe_to_ticker(dispatcher, "BTC-LTC")
     strategy.subscribe_to_ohlcv(dispatcher, "BTC-LTC")
 
+    
     testBroker = TestBroker(10, dispatcher)
     testBroker.subscribe_to_order(dispatcher, "BTC-LTC")
+        
 
 
     pass
